@@ -1,0 +1,7 @@
+*.o
+*.skel.h
+a.out
+/build
+/.output
+/.vscode
+vmlinux/
