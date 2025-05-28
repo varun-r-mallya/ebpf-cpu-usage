@@ -1,17 +1,18 @@
 #ifndef __BOOTSTRAP_H
 #define __BOOTSTRAP_H
 
-#define TASK_COMM_LEN	 16
-#define MAX_FILENAME_LEN 127
-
-struct event {
-	int pid;
-	int ppid;
-	unsigned exit_code;
-	unsigned long long duration_ns;
-	char comm[TASK_COMM_LEN];
-	char filename[MAX_FILENAME_LEN];
-	bool exit_event;
+struct cpu_stat_s {
+  unsigned long long cpu;
+  unsigned long long user;
+  unsigned long long nice;
+  unsigned long long sys;
+  unsigned long long idle;
+  unsigned long long iowait;
+  unsigned long long irq;
+  unsigned long long softirq;
+  unsigned long long steal;
+  unsigned long long guest;
+  unsigned long long guest_nice;
 };
 
 #endif /* __BOOTSTRAP_H */

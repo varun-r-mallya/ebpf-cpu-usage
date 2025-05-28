@@ -43,6 +43,10 @@ build:
 run:
 	sudo ./build/bootstrap
 
+commands:
+	make build;
+	bear --output build/compile_commands.json -- make
+
 # Generate vmlinux.h if it doesn't exist
 $(VMLINUX):
 	@echo "Generating vmlinux.h for architecture $(ARCH)..."
