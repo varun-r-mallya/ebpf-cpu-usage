@@ -1,5 +1,5 @@
-#ifndef __BOOTSTRAP_H
-#define __BOOTSTRAP_H
+#ifndef __CPU_STATS_H
+#define __CPU_STATS_H
 
 struct cpu_stat_s {
   unsigned long long cpu;
@@ -15,4 +15,4 @@ struct cpu_stat_s {
   unsigned long long guest_nice;
 };
 
-#endif /* __BOOTSTRAP_H */
+#endif /* __CPU_STATS_H */

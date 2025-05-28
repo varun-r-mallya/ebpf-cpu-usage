@@ -22,8 +22,8 @@ CFLAGS := -g -Wall
 ALL_LDFLAGS := $(LDFLAGS) $(EXTRA_LDFLAGS)
 
 # Source files
-USER_SRCS = src/bootstrap.c
-BPF_SRCS = src/bpf/bootstrap.bpf.c
+USER_SRCS = src/cpu-stats.c
+BPF_SRCS = src/bpf/cpu-stats.bpf.c
 
 # Object files
 USER_OBJS = $(patsubst src/%.c, build/%.o, $(USER_SRCS))
@@ -31,7 +31,7 @@ BPF_OBJS = $(patsubst src/bpf/%.bpf.c, build/bpf/%.bpf.o, $(BPF_SRCS))
 BPF_SKELS = $(patsubst src/bpf/%.bpf.c, build/bpf/%.skel.h, $(BPF_SRCS))
 
 # Final binary
-TARGET = build/bootstrap
+TARGET = build/cpu-stats
 
 .PHONY: all
 all: $(VMLINUX) $(TARGET)
@@ -41,7 +41,7 @@ build:
 	mkdir -p build/bpf
 
 run:
-	sudo ./build/bootstrap
+	sudo ./build/cpu-stats
 
 commands:
 	make build;

@@ -1,5 +1,5 @@
-#include "bootstrap.h"
-#include "bootstrap.skel.h"
+#include "cpu-stats.h"
+#include "cpu-stats.skel.h"
 #include <argp.h>
 #include <bpf/libbpf.h>
 #include <signal.h>
@@ -17,10 +17,9 @@ const char *argp_program_bug_address = "<varunrmallya@gmail.com>";
 const char argp_program_doc[] =
     "BPF based CPU statistics tracer.\n"
     "\n"
-    "It traces process start and exits and shows associated \n"
-    "information (filename, process duration, PID and PPID, etc).\n"
+    "Traces CPU information found in /proc/stat \n"
     "\n"
-    "USAGE: ./bootstrap [-d <min-duration-ms>] [-v]\n";
+    "USAGE: ./cpu-stats [-d <min-duration-ms>] [-v]\n";
 
 static const struct argp_option opts[] = {
     {"verbose", 'v', NULL, 0, "Verbose debug output"},
@@ -83,7 +82,8 @@ static int handle_event(void *ctx, void *data, size_t data_sz) {
     return 0;
   }
 
-  printf("%-10lld %-15lld %-15lld %-15lld %-15lld %-15lld %-15lld %-15lld %-15lld %-15lld %-15lld\n",
+  printf("%-10lld %-15lld %-15lld %-15lld %-15lld %-15lld %-15lld %-15lld "
+         "%-15lld %-15lld %-15lld\n",
          e->cpu, e->user, e->nice, e->sys, e->idle, e->iowait, e->irq,
          e->softirq, e->steal, e->guest, e->guest_nice);
 
@@ -92,7 +92,7 @@ static int handle_event(void *ctx, void *data, size_t data_sz) {
 
 int main(int argc, char **argv) {
   struct ring_buffer *rb = NULL;
-  struct bootstrap_bpf *skel;
+  struct cpu_stats_bpf *skel;
   int err;
 
   /* Parse command line arguments */
@@ -108,7 +108,7 @@ int main(int argc, char **argv) {
   signal(SIGTERM, sig_handler);
 
   /* Load and verify BPF application */
-  skel = bootstrap_bpf__open();
+  skel = cpu_stats_bpf__open();
   if (!skel) {
     fprintf(stderr, "Failed to open and load BPF skeleton\n");
     return 1;
@@ -118,14 +118,14 @@ int main(int argc, char **argv) {
   skel->rodata->min_duration_ns = env.min_duration_ms * 1000000ULL;
 
   /* Load & verify BPF programs */
-  err = bootstrap_bpf__load(skel);
+  err = cpu_stats_bpf__load(skel);
   if (err) {
     fprintf(stderr, "Failed to load and verify BPF skeleton\n");
     goto cleanup;
   }
 
   /* Attach tracepoints */
-  err = bootstrap_bpf__attach(skel);
+  err = cpu_stats_bpf__attach(skel);
   if (err) {
     fprintf(stderr, "Failed to attach BPF skeleton\n");
     goto cleanup;
@@ -160,7 +160,7 @@ int main(int argc, char **argv) {
 cleanup:
   /* Clean up */
   ring_buffer__free(rb);
-  bootstrap_bpf__destroy(skel);
+  cpu_stats_bpf__destroy(skel);
 
   return err < 0 ? -err : 0;
 }
